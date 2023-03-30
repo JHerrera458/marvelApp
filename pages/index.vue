@@ -7,9 +7,22 @@
     </v-row>
 
     <v-row>
-      <li v-for="hero in heroes.results">
-        {{ hero.name }}
-      </li>
+      <v-container>
+        <v-row v-for="hero in heroes.results" v-bind:key="hero.id">
+          <v-col cols="3" align="center">
+            <v-card>
+              <v-card-title primary-title>
+                {{ hero.name }}
+              </v-card-title>
+              <v-card-text>
+                <v-img v-bind:src="hero.thumbnail.path + '.' + hero.thumbnail.extension" width="350px">
+
+                </v-img>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-row>
   </v-container>
 </template>
@@ -17,7 +30,7 @@
 <script>
 export default {
   layout: "blank",
-  beforeMount(){
+  beforeMount() {
     this.loadHeroes()
   },
   data() {
@@ -26,7 +39,7 @@ export default {
         name: "",
         image: "",
       },
-      heroes:[],
+      heroes: [],
     }
   },
   methods: {
