@@ -13,7 +13,7 @@
         </v-card-title>
 
         <v-card-text>
-          <v-img :src="myHero.imageUrl" width="350px" height="350px"></v-img>
+          <v-img :src="myHero.imageUrl" width="450px" height="350px"></v-img>
           <p>
             {{ myHero.description }}
           </p>
@@ -30,7 +30,7 @@
           {{ myHero.eventsQuant }}
           <br>
 
-          <v-expansion-panels>
+          <v-expansion-panels popout>
             <v-expansion-panel >
               <v-expansion-panel-header>
                 Series de {{ myHero.name }}
