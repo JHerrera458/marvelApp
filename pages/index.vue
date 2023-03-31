@@ -10,6 +10,8 @@
       <v-card>
         <v-card-title class="text-h5 red darken-4" text-xs-center>
           {{ myHero.name }}
+          <v-spacer></v-spacer>
+          <v-icon @click="dialog = false">mdi-close</v-icon>
         </v-card-title>
 
         <v-card-text>
@@ -31,11 +33,11 @@
           <br>
 
           <v-expansion-panels popout>
-            <v-expansion-panel >
-              <v-expansion-panel-header>
+            <v-expansion-panel>
+              <v-expansion-panel-header class="red darken-4" >
                 Series de {{ myHero.name }}
               </v-expansion-panel-header>
-              <v-expansion-panel-content v-for="(serie, i) in myHero.series" :key="i">
+              <v-expansion-panel-content elevation="10" v-for="(serie, i) in myHero.series" :key="i">
                 {{ serie.name }}
               </v-expansion-panel-content>
             </v-expansion-panel>
@@ -46,8 +48,8 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialog = false">
-            I accept
+          <v-btn color="white" text @click="dialog = false">
+            Cerrar
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -65,7 +67,7 @@
             </v-img>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" dark @click="showDescription(hero)">Ver más</v-btn>
+            <v-btn color="red darken-4" dark @click="showDescription(hero)">Ver más</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -122,7 +124,7 @@ export default {
       this.myHero.storiesQuant = hero.stories.available
       this.myHero.eventsQuant = hero.events.available
       this.myHero.series = hero.series.items
-      this.myHero.series = this.myHero.series.slice(0,3)
+      this.myHero.series = this.myHero.series.slice(0, 3)
     }
   }
 }
