@@ -6,11 +6,58 @@
       </v-col>
     </v-row>
 
+    <v-dialog v-model="dialog" width="500">
+      <v-card>
+        <v-card-title class="text-h5 red darken-4" text-xs-center>
+          {{ myHero.name }}
+        </v-card-title>
+
+        <v-card-text>
+          <v-img :src="myHero.imageUrl" width="350px" height="350px"></v-img>
+          <p>
+            {{ myHero.description }}
+          </p>
+          <span class="title">Cantidad de Comics: </span>
+          {{ myHero.comicsQuant }}
+          <br>
+          <span class="title">Cantidad de Series: </span>
+          {{ myHero.seriesQuant }}
+          <br>
+          <span class="title">Cantidad de Historias: </span>
+          {{ myHero.storiesQuant }}
+          <br>
+          <span class="title">Cantidad de Eventos: </span>
+          {{ myHero.eventsQuant }}
+          <br>
+
+          <v-expansion-panels>
+            <v-expansion-panel >
+              <v-expansion-panel-header>
+                Series de {{ myHero.name }}
+              </v-expansion-panel-header>
+              <v-expansion-panel-content v-for="(serie, i) in myHero.series" :key="i">
+                {{ serie.name }}
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialog = false">
+            I accept
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-row>
       <v-col cols="3" align="center" v-for="hero in heroes.results" v-bind:key="hero.id">
         <v-card>
           <v-card-title primary-title>
-            {{ hero.name.split(" ")[0] }}
+            {{ hero.name }}
           </v-card-title>
           <v-card-text>
             <v-img v-bind:src="hero.thumbnail.path + '.' + hero.thumbnail.extension" width="350px" height="350px">
@@ -37,9 +84,16 @@ export default {
     return {
       myHero: {
         name: "",
-        image: "",
+        imageUrl: "",
+        description: "",
+        comicsQuant: 0,
+        seriesQuant: 0,
+        storiesQuant: 0,
+        eventsQuant: 0,
+        series: []
       },
       heroes: [],
+      dialog: false,
     }
   },
   methods: {
@@ -55,11 +109,28 @@ export default {
 
     showDescription(hero) {
       if (hero.description == "") {
-        console.log(`El heroe ${hero.name} no tiene descripción`);
+        this.myHero.description = "No tiene descripción"
+
       } else {
-        console.log(`Descripción de ${hero.name}: ${hero.description}`);
+        this.myHero.description = `${hero.description}`
       }
+      this.dialog = true
+      this.myHero.name = hero.name
+      this.myHero.imageUrl = `${hero.thumbnail.path}.${hero.thumbnail.extension}`
+      this.myHero.comicsQuant = hero.comics.available
+      this.myHero.seriesQuant = hero.series.available
+      this.myHero.storiesQuant = hero.stories.available
+      this.myHero.eventsQuant = hero.events.available
+      this.myHero.series = hero.series.items
+      this.myHero.series = this.myHero.series.slice(0,3)
     }
   }
 }
 </script>
+
+<style scoped>
+.title {
+  font-weight: bold;
+  font-size: large;
+}
+</style>
