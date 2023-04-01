@@ -7,7 +7,8 @@
     </v-row>
     <v-row>
       <v-col cols="12" align="center">
-        <v-btn color="red darken-4" dark @click="loadMoreHeroes()">Cargar más personajes</v-btn>
+        <v-btn color="red darken-4" dark @click="loadLessHeroes()" :disabled="!btnLess" :loading="loading">Cargar menos personajes</v-btn>
+        <v-btn color="red darken-4" dark @click="loadMoreHeroes()" :loading="loading">Cargar más personajes</v-btn>
       </v-col>
     </v-row>
 
@@ -103,6 +104,8 @@ export default {
       dialog: false,
       limit: 20,
       offset: 0,
+      btnLess: false,
+      loading: false,
     }
   },
   methods: {
@@ -110,17 +113,37 @@ export default {
       const limit = this.limit.toString()
       const offset = this.offset.toString()
       const url = `https://gateway.marvel.com:443/v1/public/characters?limit=${limit}&offset=${offset}&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
+      this.loading = true
       this.$axios.get(url).then(response => {
         this.heroes = response.data.data
-        console.log(this.heroes);
       }).catch(error => {
         console.log(error);
+      }).finally(()=>{
+        this.loading = false
       })
     },
+
     loadMoreHeroes(){
+      if (this.offset == 20) {
+        this.btnLess = false
+      }
       this.offset += 20
       this.loadHeroes()
+      this.btnLess = true
     },
+
+    loadLessHeroes(){
+      if (this.offset == 20) {
+        this.offset -= 20
+        this.loadHeroes()
+        this.btnLess = false
+      } else {
+        this.offset -= 20
+        this.btnLess = true
+        this.loadHeroes()
+      }
+    },
+
     showDescription(hero) {
       if (hero.description == "") {
         this.myHero.description = "No tiene descripción"
