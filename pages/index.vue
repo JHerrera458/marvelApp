@@ -5,6 +5,11 @@
         <h1>Marvel APP</h1>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" align="center">
+        <v-btn color="red darken-4" dark @click="loadMoreHeroes()">Cargar más personajes</v-btn>
+      </v-col>
+    </v-row>
 
     <v-dialog v-model="dialog" width="500">
       <v-card>
@@ -34,7 +39,7 @@
 
           <v-expansion-panels popout>
             <v-expansion-panel>
-              <v-expansion-panel-header class="red darken-4" >
+              <v-expansion-panel-header class="red darken-4">
                 Series de {{ myHero.name }}
               </v-expansion-panel-header>
               <v-expansion-panel-content elevation="10" v-for="(serie, i) in myHero.series" :key="i">
@@ -96,11 +101,15 @@ export default {
       },
       heroes: [],
       dialog: false,
+      limit: 20,
+      offset: 0,
     }
   },
   methods: {
     loadHeroes() {
-      const url = "https://gateway.marvel.com:443/v1/public/characters?limit=40&offset=0&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2"
+      const limit = this.limit.toString()
+      const offset = this.offset.toString()
+      const url = `https://gateway.marvel.com:443/v1/public/characters?limit=${limit}&offset=${offset}&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
       this.$axios.get(url).then(response => {
         this.heroes = response.data.data
         console.log(this.heroes);
@@ -108,7 +117,10 @@ export default {
         console.log(error);
       })
     },
-
+    loadMoreHeroes(){
+      this.offset += 20
+      this.loadHeroes()
+    },
     showDescription(hero) {
       if (hero.description == "") {
         this.myHero.description = "No tiene descripción"
@@ -134,5 +146,6 @@ export default {
 .title {
   font-weight: bold;
   font-size: large;
+  margin-left: 35px;
 }
 </style>
