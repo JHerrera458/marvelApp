@@ -160,6 +160,7 @@ export default {
       this.limit = 20
       this.offset = 0
       this.loadHeroes(this.heroName)
+      this.btnLess = false
     },
 
     showDescription(hero) {
