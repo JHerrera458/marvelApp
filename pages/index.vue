@@ -1,14 +1,18 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" align="center">
-        <h1>Marvel APP</h1>
+      <v-spacer></v-spacer>
+      <v-col cols="3">
+        <v-text-field label="Search hero by name" v-model="heroName" @click:append="loadHeroes(heroName)"
+          append-icon="mdi-magnify" prepend-icon="mdi-close" @click:prepend="eraseSearch()"></v-text-field>
       </v-col>
+      <v-spacer></v-spacer>
     </v-row>
     <v-row>
       <v-col cols="12" align="center">
-        <v-btn color="red darken-4" dark @click="loadLessHeroes()" :disabled="!btnLess" :loading="loading">Cargar menos personajes</v-btn>
-        <v-btn color="red darken-4" dark @click="loadMoreHeroes()" :loading="loading">Cargar más personajes</v-btn>
+        <v-btn color="red darken-4" dark @click="loadLessHeroes()" :disabled="!btnLess" :loading="loading"
+          width="150">Previous Page</v-btn>
+        <v-btn color="red darken-4" dark @click="loadMoreHeroes()" :loading="loading" width="150">Load Heroes</v-btn>
       </v-col>
     </v-row>
 
@@ -25,23 +29,23 @@
           <p>
             {{ myHero.description }}
           </p>
-          <span class="title">Cantidad de Comics: </span>
+          <span class="title">Comics Quantity: </span>
           {{ myHero.comicsQuant }}
           <br>
-          <span class="title">Cantidad de Series: </span>
+          <span class="title">Series Quantity: </span>
           {{ myHero.seriesQuant }}
           <br>
-          <span class="title">Cantidad de Historias: </span>
+          <span class="title">Histories Quantity: </span>
           {{ myHero.storiesQuant }}
           <br>
-          <span class="title">Cantidad de Eventos: </span>
+          <span class="title">Events Quantity: </span>
           {{ myHero.eventsQuant }}
           <br>
 
           <v-expansion-panels popout>
             <v-expansion-panel>
               <v-expansion-panel-header class="red darken-4">
-                Series de {{ myHero.name }}
+                <span style="font-weight: bold"> {{ myHero.name }} </span> Series
               </v-expansion-panel-header>
               <v-expansion-panel-content elevation="10" v-for="(serie, i) in myHero.series" :key="i">
                 {{ serie.name }}
@@ -73,7 +77,7 @@
             </v-img>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="red darken-4" dark @click="showDescription(hero)">Ver más</v-btn>
+            <v-btn color="red darken-4" dark @click="showDescription(hero)">Details...</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -86,7 +90,7 @@
 export default {
   layout: "blank",
   beforeMount() {
-    this.loadHeroes()
+    this.loadHeroes(this.heroName)
   },
   data() {
     return {
@@ -106,42 +110,56 @@ export default {
       offset: 0,
       btnLess: false,
       loading: false,
+      heroName: "",
     }
   },
   methods: {
-    loadHeroes() {
-      const limit = this.limit.toString()
+    loadHeroes(heroName) {
+      var limit = this.limit.toString()
       const offset = this.offset.toString()
-      const url = `https://gateway.marvel.com:443/v1/public/characters?limit=${limit}&offset=${offset}&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
+      var url = ""
+      if (heroName == "") {
+        url = `https://gateway.marvel.com:443/v1/public/characters?limit=${limit}&offset=${offset}&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
+      } else {
+        url = `https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=${heroName}&limit=100&offset=0&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
+      }
       this.loading = true
       this.$axios.get(url).then(response => {
         this.heroes = response.data.data
       }).catch(error => {
-        console.log(error);
-      }).finally(()=>{
+        alert("Hubo un error cargando los personajes")
+      }).finally(() => {
         this.loading = false
       })
     },
 
-    loadMoreHeroes(){
+    loadMoreHeroes() {
       if (this.offset == 20) {
         this.btnLess = false
       }
       this.offset += 20
-      this.loadHeroes()
+      this.loadHeroes(this.heroName)
       this.btnLess = true
     },
 
-    loadLessHeroes(){
+    loadLessHeroes() {
       if (this.offset == 20) {
         this.offset -= 20
-        this.loadHeroes()
+        this.loadHeroes(this.heroName)
         this.btnLess = false
       } else {
         this.offset -= 20
         this.btnLess = true
-        this.loadHeroes()
+        this.loadHeroes(this.heroName)
       }
+    },
+
+    eraseSearch() {
+      this.heroName = ""
+      
+      this.limit = 20
+      this.offset = 0
+      this.loadHeroes(this.heroName)
     },
 
     showDescription(hero) {
