@@ -1,18 +1,35 @@
+<!-- eslint-disable space-before-function-paren -->
 <template>
   <v-container>
     <v-row>
-      <v-spacer></v-spacer>
+      <v-spacer />
       <v-col cols="3">
-        <v-text-field label="Search hero by name" v-model="heroName" @click:append="loadHeroes(heroName)"
-          append-icon="mdi-magnify" prepend-icon="mdi-close" @click:prepend="eraseSearch()"></v-text-field>
+        <v-text-field
+          v-model="heroName"
+          label="Search hero by name"
+          append-icon="mdi-magnify"
+          prepend-icon="mdi-close"
+          @click:append="loadHeroes(heroName)"
+          @click:prepend="eraseSearch()"
+        />
       </v-col>
-      <v-spacer></v-spacer>
+      <v-spacer />
     </v-row>
     <v-row>
       <v-col cols="12" align="center">
-        <v-btn color="red darken-4" dark @click="loadLessHeroes()" :disabled="!btnLess" :loading="loading"
-          width="150">Previous Page</v-btn>
-        <v-btn color="red darken-4" dark @click="loadMoreHeroes()" :loading="loading" width="150">Load Heroes</v-btn>
+        <v-btn
+          color="red darken-4"
+          dark
+          :disabled="!btnLess"
+          :loading="loading"
+          width="150"
+          @click="loadLessHeroes()"
+        >
+          Previous Page
+        </v-btn>
+        <v-btn color="red darken-4" dark :loading="loading" width="150" @click="loadMoreHeroes()">
+          Load Heroes
+        </v-btn>
       </v-col>
     </v-row>
 
@@ -20,12 +37,14 @@
       <v-card>
         <v-card-title class="text-h5 red darken-4" text-xs-center>
           {{ myHero.name }}
-          <v-spacer></v-spacer>
-          <v-icon @click="dialog = false">mdi-close</v-icon>
+          <v-spacer />
+          <v-icon @click="dialog = false">
+            mdi-close
+          </v-icon>
         </v-card-title>
 
         <v-card-text>
-          <v-img :src="myHero.imageUrl" width="450px" height="350px"></v-img>
+          <v-img :src="myHero.imageUrl" width="450px" height="350px" />
           <p>
             {{ myHero.description }}
           </p>
@@ -47,17 +66,17 @@
               <v-expansion-panel-header class="red darken-4">
                 <span style="font-weight: bold"> {{ myHero.name }} </span> Series
               </v-expansion-panel-header>
-              <v-expansion-panel-content elevation="10" v-for="(serie, i) in myHero.series" :key="i">
+              <v-expansion-panel-content v-for="(serie, i) in myHero.series" :key="i" elevation="10">
                 {{ serie.name }}
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card-text>
 
-        <v-divider></v-divider>
+        <v-divider />
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="white" text @click="dialog = false">
             Cerrar
           </v-btn>
@@ -66,38 +85,34 @@
     </v-dialog>
 
     <v-row>
-      <v-col cols="3" align="center" v-for="hero in heroes.results" v-bind:key="hero.id">
+      <v-col v-for="hero in heroes.results" :key="hero.id" cols="3" align="center">
         <v-card>
           <v-card-title primary-title>
             {{ hero.name }}
           </v-card-title>
           <v-card-text>
-            <v-img v-bind:src="hero.thumbnail.path + '.' + hero.thumbnail.extension" width="350px" height="350px">
-
-            </v-img>
+            <v-img :src="hero.thumbnail.path + '.' + hero.thumbnail.extension" width="350px" height="350px" />
           </v-card-text>
           <v-card-actions>
-            <v-btn color="red darken-4" dark @click="showDescription(hero)">Details...</v-btn>
+            <v-btn color="red darken-4" dark @click="showDescription(hero)">
+              Details...
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
-
   </v-container>
 </template>
 
 <script>
 export default {
-  layout: "blank",
-  beforeMount() {
-    this.loadHeroes(this.heroName)
-  },
-  data() {
+  layout: 'blank',
+  data () {
     return {
       myHero: {
-        name: "",
-        imageUrl: "",
-        description: "",
+        name: '',
+        imageUrl: '',
+        description: '',
         comicsQuant: 0,
         seriesQuant: 0,
         storiesQuant: 0,
@@ -110,31 +125,34 @@ export default {
       offset: 0,
       btnLess: false,
       loading: false,
-      heroName: "",
+      heroName: ''
     }
   },
+  beforeMount () {
+    this.loadHeroes(this.heroName)
+  },
   methods: {
-    loadHeroes(heroName) {
-      var limit = this.limit.toString()
+    loadHeroes (heroName) {
+      const limit = this.limit.toString()
       const offset = this.offset.toString()
-      var url = ""
-      if (heroName == "") {
+      let url = ''
+      if (heroName === '') {
         url = `https://gateway.marvel.com:443/v1/public/characters?limit=${limit}&offset=${offset}&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
       } else {
         url = `https://gateway.marvel.com:443/v1/public/characters?nameStartsWith=${heroName}&limit=100&offset=0&ts=1&apikey=21a4da889edbe77bc6cb0a69e352ec87&hash=84fbb30897280ab8b56fcdd59fb4ffe2`
       }
       this.loading = true
-      this.$axios.get(url).then(response => {
+      this.$axios.get(url).then((response) => {
         this.heroes = response.data.data
-      }).catch(error => {
-        alert("Hubo un error cargando los personajes")
+      }).catch(() => {
+        alert('Hubo un error cargando los personajes')
       }).finally(() => {
         this.loading = false
       })
     },
 
-    loadMoreHeroes() {
-      if (this.offset == 20) {
+    loadMoreHeroes () {
+      if (this.offset === 20) {
         this.btnLess = false
       }
       this.offset += 20
@@ -142,8 +160,8 @@ export default {
       this.btnLess = true
     },
 
-    loadLessHeroes() {
-      if (this.offset == 20) {
+    loadLessHeroes () {
+      if (this.offset === 20) {
         this.offset -= 20
         this.loadHeroes(this.heroName)
         this.btnLess = false
@@ -154,19 +172,18 @@ export default {
       }
     },
 
-    eraseSearch() {
-      this.heroName = ""
-      
+    eraseSearch () {
+      this.heroName = ''
+
       this.limit = 20
       this.offset = 0
       this.loadHeroes(this.heroName)
       this.btnLess = false
     },
 
-    showDescription(hero) {
-      if (hero.description == "") {
-        this.myHero.description = "No tiene descripción"
-
+    showDescription (hero) {
+      if (hero.description === '') {
+        this.myHero.description = 'No tiene descripción'
       } else {
         this.myHero.description = `${hero.description}`
       }
